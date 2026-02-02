@@ -102,3 +102,20 @@ FROM (
     WHERE transaction_type = 'expense'
     GROUP BY txn_year, txn_month
 ) t;
+
+
+-- 8. Month-over-Month (MoM) Expense
+
+SELECT 
+    years_month,
+    total_expense,
+    total_expense -
+    LAG(total_expense) OVER (ORDER BY years_month) AS mom_change
+FROM (
+    SELECT 
+        years_month,
+        SUM(abs_amount) AS total_expense
+    FROM finance_transactions
+    WHERE transaction_type = 'expense'
+    GROUP BY years_month
+) t;
